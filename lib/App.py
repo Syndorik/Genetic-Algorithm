@@ -52,10 +52,14 @@ class App:
                     App.printProgressBar(self.count,tot,prefix=" Status progression")
                     self.count+=1
 
-    def __init__(self,list_files, n_generations = 100 , pop_size = 100 , graph=False):
+    def __init__(self,list_files, n_generations = 100 , pop_size = 100, k_mut_prob = 0.4, k_crossover = 3, tournament_size=7, elitism =True):
         self.list_files = list_files
         self.n_generations = n_generations
         self.pop_size = pop_size
+        self.k_mut_prob = k_mut_prob
+        self.k_crossover = k_crossover
+        self.tournament_size = tournament_size
+        self.elitism = elitism
 
         #Looping
 
@@ -93,7 +97,12 @@ class App:
         for x in range(0,self.n_generations):
             start_time1 = time.time()
             # Evolves the population:
-            the_population = GA(self.list_files).evolve_population(the_population)
+
+            the_population = GA(self.list_files,
+                                k_mut_prob= self.k_mut_prob,
+                                k_crossover= self.k_crossover,
+                                tournament_size= self.tournament_size,
+                                elitism= self.elitism).evolve_population(the_population)
 
             # If we have found a new shorter route, save it to best_route
             if the_population.fittest.fitness < best_tree.fitness:
@@ -105,6 +114,13 @@ class App:
             print("Best Fitness : {}".format(best_tree.fitness))
             logging.info("\nTime taken for one generation : {}s".format(end_time1-start_time1))
             logging.info("Best Fitness : {}".format(best_tree.fitness))
+
+            #Termination criteria : 5 times the same fitness
+            if(fitness_over_gen.count(best_tree.fitness)>4):
+                print("Termination Criteria reached : No improvement for 4 generations")
+                logging.info("Termination Criteria reached : No improvement for 4 generations")
+                break
+            
             fitness_over_gen.append(best_tree.fitness)
 
         # takes the end time of the run:
@@ -132,13 +148,105 @@ class App:
 
 if __name__ == '__main__':
 
+    NGENERATION_DEF = 100
+    NPOPULATION_DEF = 100
+    KMUTPROB = 0.4
+    KCROSSOVER = 3
+    TOURNAMENTSIZE=7
+    ELITISM =True
+
+
+    #Parser arguments
+
+    #k_mut_prob = 0.4, k_crossover = 3, tournament_size=7, elitism =True
+
     parser = argparse.ArgumentParser(description='MainApp')
-    parser.add_argument('logname', metavar='l', nargs=1,
+    parser.add_argument('-l','-log', nargs=1, metavar = "",
                         help='Name of the logfile')
 
-    myparser = parser.parse_args()
-    logname = myparser.logname[0]
+    parser.add_argument('-ng','-num_of_generation',metavar = "", nargs=1,
+                        help='Number of generation')
+    
+    parser.add_argument('-np','-num_of_pop',metavar = "", nargs=1,
+                        help='Number of population')
+    
+    parser.add_argument('-m','-mutation_probabilitie',metavar = "", nargs=1,
+                        help='Mutation probabilitie')
 
+    parser.add_argument('-c','-crossover',metavar = "", nargs=1,
+                        help='Division for crossover')
+    
+    parser.add_argument('-t','-tournament_size',metavar = "", nargs=1,
+                        help='Tournament size')
+    
+    parser.add_argument('--e','--elitism',action="store_true",
+                        help='If this flag is raised, there will be no elitism in the GA')
+
+    parser.add_argument('--s','--small',action="store_true",
+                        help='Take the large or small instance, if option -s, then the small instance is taken')
+
+
+    myparser = parser.parse_args()
+
+    if(myparser.e):
+        elitism = False
+    else:
+        elitism = ELITISM
+    
+    if(myparser.m != None):
+        k_mut_prob = myparser.m[0]
+    else:
+        k_mut_prob = KMUTPROB
+    
+    if(myparser.c != None):
+        k_crossover = myparser.c[0]
+    else:
+        k_crossover = KCROSSOVER
+    
+    if(myparser.t != None):
+        tournament_size =  myparser.t[0]
+    else:
+        tournament_size = TOURNAMENTSIZE
+
+    if(myparser.l != None):
+        logname = "./log/{}".format(myparser.l[0])
+    else:
+        logname = "./log/def_log"
+    
+    if(myparser.ng != None):
+        n_generations = myparser.ng[0]
+    else:
+        n_generations = NGENERATION_DEF
+    
+    if(myparser.np != None):
+        n_population = myparser.np[0]
+    else:
+        n_population = NPOPULATION_DEF
+    
+    if(myparser.s):
+        mysheet = "../data/InputDataHubSmallInstance.xlsx"
+    else:
+        mysheet = "../data/InputDataHubLargeInstance.xlsx"
+    
+
+    KMUTPROB = 0.4
+    KCROSSOVER = 3
+    TOURNAMENTSIZE=7
+    ELITISM =True
+
+    print("The following arguments were chosen :")
+    print("Number of generation : {}".format(n_generations))
+    print("Size of the population :  {}".format(n_population))
+    print("Log file will be located at : {}".format(logname))
+    print("The input data taken is : {}".format(mysheet))
+    print("The mutation probability : {}".format(k_mut_prob))
+    print("The number of point for crossover : {}".format(k_crossover))
+    print("The size for tournament : {}".format(tournament_size))
+    print("The elitism : {}".format(elitism))
+    print("##################")
+
+
+    
 
     def read_excel_data(filename, sheet_name):
         data = pd.read_excel(filename, sheet_name=sheet_name, header=None)
@@ -147,7 +255,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG, filename=logname, filemode="a+",
                         format="%(asctime)-15s %(levelname)-8s %(message)s")
     
-    mysheet = "../data/InputDataHubLargeInstance.xlsx"
+    
     list_files = [read_excel_data(mysheet, "NodeNum"), read_excel_data(mysheet, "flow"), read_excel_data(mysheet, "varCost"),
                 read_excel_data(mysheet, "fixCost"), read_excel_data(mysheet, "alpha"), read_excel_data(mysheet, "Cap")]
     flow = list_files[1]
@@ -164,4 +272,10 @@ if __name__ == '__main__':
     list_files.append(Origin)
     list_files.append(Destination)
 
-    app = App(list_files)
+    app = App(list_files,
+                n_generations = n_generations ,
+                pop_size = n_population,
+                k_mut_prob= k_mut_prob,
+                k_crossover= k_crossover,
+                tournament_size= tournament_size,
+                elitism=elitism)
