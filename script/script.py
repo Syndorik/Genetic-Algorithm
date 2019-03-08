@@ -1,16 +1,17 @@
 import os
-
+import sys
 os.chdir("../lib")
 
+
 def exec(mypar,log):
-	cmd = "python App.py "
+	cmd = "python3 App.py "
 	pars = ""
 	for k in mypar: 
 		pars+= " -"+str(k)+" "+str(mypar[k])
 	cmd = cmd + pars + ' -l ' + str(log)
-	print("##########")
-	print(cmd)
-	os.system(cmd)
+	lgn = os.system(cmd)
+	print(lgn)
+	return lgn
 	
 
 params = {
@@ -59,21 +60,20 @@ for j in params["c"]:
 	params_c.append({"np": 200, "t" : 8 , "c" : j})
 
 for kk in range(len(params_np_t)):
-	lg = str(kk)
-	lgn = exec(params_np_t[kk], lg)
-        os.rename(lgn, "tournAndpop/"+lgn)
-
+	lg = "tournAndpop_" + str(kk)
+	exec(params_np_t[kk], lg)
+	
 for jj in range(len(params_m)):
 	for l in range(4):
-		lg = str(jj)+"-"+str(l)
-		lgn = exec(params_m[jj], lg)
-                os.rename(lgn, "mutation/"+lgn)
+		lg = "mutation_"+str(jj)+"-"+str(l)
+		exec(params_m[jj], lg)
+		
 
 for jj in range(len(params_c)):
 	for l in range(4):
-		lg = str(jj)+"-"+str(l)
+		lg = "cross_"+str(jj)+"-"+str(l)
 		lgn = exec(params_c[jj], lg)
-                os.rename(lgn, "cross/"+lgn)
+
 
 
 

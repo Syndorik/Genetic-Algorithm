@@ -13,6 +13,7 @@ from TreePop import TreePop
 from GA import GA
 import copy
 import logging
+import sys
 
 class App:
     """
@@ -36,7 +37,7 @@ class App:
         percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
         filledLength = int(length * iteration // total)
         bar = fill * filledLength + '-' * (length - filledLength)
-        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix), end = '\r')
+        print('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix))
         logging.info('\r%s |%s| %s%% %s' % (prefix, bar, percent, suffix))
         # Print New Line on Complete
         if iteration == total: 
@@ -320,5 +321,5 @@ if __name__ == '__main__':
                 elitism=elitism,
                 method= method )
     logging.shutdown()
-    os.rename(logname, logname[:6]+"Fitness={}_".format(round(app.final_fitness/(10**8),1)) + logname[6:]) 
-    sys.exit(logname[:6]+"Fitness={}_".format(round(app.final_fitness/(10**8),1)) + logname[6:])
+    os.rename(logname, logname[:6]+"Fitness={}_".format(round(app.final_fitness/(10**8),2)) + logname[6:]) 
+    sys.exit(logname[:6]+"Fitness={}_".format(round(app.final_fitness/(10**8),2)) + logname[6:])

@@ -170,7 +170,3 @@ Time taken for one generation : 0.33977293968200684s
 2019-02-27 18:30:12,051 INFO     Final best fitness:   7170961.95
 2019-02-27 18:30:12,051 INFO     Best fitness over generations [7731709.05, 7731709.05, 7717794.15, 7392721.15, 7241619.550000001, 7170961.950000001, 7170961.950000001, 7170961.950000001, 7170961.950000001, 7170961.950000001]
 2019-02-27 18:30:12,051 INFO     The prufer sequence of the best Tree [1, 7, 5, 0, 7, 7]
-2019-03-08 14:34:07,754 INFO     Calculating GA_loop
-2019-03-08 14:34:07,755 INFO     Creates the population:
-2019-03-08 14:34:09,296 INFO     Finished Creation of the population
-2019-03-08 14:34:09,304 INFO      Status progression |----------------------------------------------------------------------------------------------------| 0.0% 
