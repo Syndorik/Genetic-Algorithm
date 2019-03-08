@@ -321,3 +321,4 @@ if __name__ == '__main__':
                 method= method )
     logging.shutdown()
     os.rename(logname, logname[:6]+"Fitness={}_".format(round(app.final_fitness/(10**8),1)) + logname[6:]) 
+    sys.exit(logname[:6]+"Fitness={}_".format(round(app.final_fitness/(10**8),1)) + logname[6:])

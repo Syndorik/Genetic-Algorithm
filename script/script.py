@@ -59,18 +59,21 @@ for j in params["c"]:
 	params_c.append({"np": 200, "t" : 8 , "c" : j})
 
 for kk in range(len(params_np_t)):
-	lg = "tournAndpop/"+str(kk)
-	exec(params_np_t[kk], lg)
+	lg = str(kk)
+	lgn = exec(params_np_t[kk], lg)
+        os.rename(lgn, "tournAndpop/"+lgn)
 
 for jj in range(len(params_m)):
 	for l in range(4):
-		lg = "mutation/"+str(jj)
-		exec(params_m[jj], lg)
+		lg = str(jj)+"-"+str(l)
+		lgn = exec(params_m[jj], lg)
+                os.rename(lgn, "mutation/"+lgn)
 
 for jj in range(len(params_c)):
 	for l in range(4):
-		lg = "cross/"+str(jj)
-		exec(params_c[jj], lg)
+		lg = str(jj)+"-"+str(l)
+		lgn = exec(params_c[jj], lg)
+                os.rename(lgn, "cross/"+lgn)
 
 
 

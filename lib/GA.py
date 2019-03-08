@@ -338,7 +338,7 @@ class GA:
         """
         TreePop() --> TreePop()
         Change the first three best trees (in term of fitness). We're testing every swap possible.
-        ### @TODO do it until there are 3 different trees
+        ### @TODO do it until there are 5 different trees
         """
         population.sort_treepop()
 
