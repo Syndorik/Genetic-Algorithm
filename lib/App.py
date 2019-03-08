@@ -52,7 +52,7 @@ class App:
                     App.printProgressBar(self.count,tot,prefix=" Status progression")
                     self.count+=1
 
-    def __init__(self,list_files, n_generations = 100 , pop_size = 100, k_mut_prob = 0.4, k_crossover = 3, tournament_size=7, elitism =True):
+    def __init__(self,list_files, n_generations = 100 , pop_size = 100, k_mut_prob = 0.4, k_crossover = 3, tournament_size=7, elitism =True, method = "swap"):
         self.list_files = list_files
         self.n_generations = n_generations
         self.pop_size = pop_size
@@ -60,12 +60,13 @@ class App:
         self.k_crossover = k_crossover
         self.tournament_size = tournament_size
         self.elitism = elitism
+        self.method = method
 
         #Looping
 
         print("Calculating GA_loop")
         logging.info("Calculating GA_loop")
-        self.ga_loop()
+        self.final_fitness = self.ga_loop()
     
     def ga_loop(self):
         '''
@@ -102,26 +103,58 @@ class App:
                                 k_mut_prob= self.k_mut_prob,
                                 k_crossover= self.k_crossover,
                                 tournament_size= self.tournament_size,
-                                elitism= self.elitism).evolve_population(the_population)
+                                elitism= self.elitism,
+                                method = self.method).evolve_population(the_population)
 
+            #If fitness stays the same we try to local search a better solution and see how it goes. We're modifying the first
+            #three bests.
+            if(fitness_over_gen.count(best_tree.fitness)==3):
+                the_population =GA(self.list_files,
+                                    k_mut_prob= self.k_mut_prob,
+                                    k_crossover= self.k_crossover,
+                                    tournament_size= self.tournament_size,
+                                    elitism= self.elitism,
+                                    method= self.method).change_three_bests(the_population)
+            
             # If we have found a new shorter route, save it to best_route
             if the_population.fittest.fitness < best_tree.fitness:
                 # set the route (copy.deepcopy because the_population.fittest is persistent in this loop so will cause reference bugs)
                 best_tree = copy.deepcopy(the_population.fittest)
+
+            #Termination criteria : 8 times the same fitness
+
+            if(fitness_over_gen.count(best_tree.fitness)>7 and x>30):
+                old_tree = copy.deepcopy(best_tree)
+                the_population =GA(self.list_files,
+                                    k_mut_prob= self.k_mut_prob,
+                                    k_crossover= self.k_crossover,
+                                    tournament_size= self.tournament_size,
+                                    elitism= self.elitism,
+                                    method= self.method).change_three_bests(the_population)
+                best_tree = copy.deepcopy(the_population.fittest)
+
+                if(old_tree.fitness == best_tree.fitness):
+                    print("Termination Criteria reached : No improvement for 8 generations")
+                    logging.info("Termination Criteria reached : No improvement for 8 generations")
+                    break
+
+
             self.maj(tot = tot)
             end_time1 = time.time()
             print("\nTime taken for one generation : {}s".format(end_time1-start_time1))
             print("Best Fitness : {}".format(best_tree.fitness))
             logging.info("\nTime taken for one generation : {}s".format(end_time1-start_time1))
             logging.info("Best Fitness : {}".format(best_tree.fitness))
-
-            #Termination criteria : 5 times the same fitness
-            if(fitness_over_gen.count(best_tree.fitness)>4):
-                print("Termination Criteria reached : No improvement for 4 generations")
-                logging.info("Termination Criteria reached : No improvement for 4 generations")
-                break
             
             fitness_over_gen.append(best_tree.fitness)
+        
+        best_tree =GA(self.list_files,
+                            k_mut_prob= self.k_mut_prob,
+                            k_crossover= self.k_crossover,
+                            tournament_size= self.tournament_size,
+                            elitism= self.elitism,
+                            method= self.method).fittest_swap(best_tree)
+
 
         # takes the end time of the run:
         end_time = time.time()
@@ -142,7 +175,8 @@ class App:
         print('Final best fitness:   {0:.2f}'.format(best_tree.fitness))
         print('Best fitness over generations {}'.format(fitness_over_gen))
         print('The prufer sequence of the best Tree {}'.format(best_tree.prufer))
-        return
+
+        return best_tree.fitness
 
 
 
@@ -154,6 +188,7 @@ if __name__ == '__main__':
     KCROSSOVER = 3
     TOURNAMENTSIZE=7
     ELITISM =True
+    METHOD = "swap"
 
 
     #Parser arguments
@@ -179,6 +214,9 @@ if __name__ == '__main__':
     parser.add_argument('-t','-tournament_size',metavar = "", nargs=1,
                         help='Tournament size')
     
+    parser.add_argument('-me','-method',metavar = "", nargs=1,
+                        help='method for mutation')
+
     parser.add_argument('--e','--elitism',action="store_true",
                         help='If this flag is raised, there will be no elitism in the GA')
 
@@ -194,17 +232,17 @@ if __name__ == '__main__':
         elitism = ELITISM
     
     if(myparser.m != None):
-        k_mut_prob = myparser.m[0]
+        k_mut_prob = float(myparser.m[0])
     else:
         k_mut_prob = KMUTPROB
     
     if(myparser.c != None):
-        k_crossover = myparser.c[0]
+        k_crossover = int(myparser.c[0])
     else:
         k_crossover = KCROSSOVER
     
     if(myparser.t != None):
-        tournament_size =  myparser.t[0]
+        tournament_size =  int(myparser.t[0])
     else:
         tournament_size = TOURNAMENTSIZE
 
@@ -214,12 +252,12 @@ if __name__ == '__main__':
         logname = "./log/def_log"
     
     if(myparser.ng != None):
-        n_generations = myparser.ng[0]
+        n_generations = int(myparser.ng[0])
     else:
         n_generations = NGENERATION_DEF
     
     if(myparser.np != None):
-        n_population = myparser.np[0]
+        n_population = int(myparser.np[0])
     else:
         n_population = NPOPULATION_DEF
     
@@ -228,11 +266,11 @@ if __name__ == '__main__':
     else:
         mysheet = "../data/InputDataHubLargeInstance.xlsx"
     
+    if(myparser.me != None):
+        method = myparser.me[0]
+    else:
+        method = METHOD
 
-    KMUTPROB = 0.4
-    KCROSSOVER = 3
-    TOURNAMENTSIZE=7
-    ELITISM =True
 
     print("The following arguments were chosen :")
     print("Number of generation : {}".format(n_generations))
@@ -243,6 +281,7 @@ if __name__ == '__main__':
     print("The number of point for crossover : {}".format(k_crossover))
     print("The size for tournament : {}".format(tournament_size))
     print("The elitism : {}".format(elitism))
+    print("The mutation method chosen {}".format(method))
     print("##################")
 
 
@@ -278,4 +317,7 @@ if __name__ == '__main__':
                 k_mut_prob= k_mut_prob,
                 k_crossover= k_crossover,
                 tournament_size= tournament_size,
-                elitism=elitism)
+                elitism=elitism,
+                method= method )
+    logging.shutdown()
+    os.rename(logname, logname[:6]+"Fitness={}_".format(round(app.final_fitness/(10**8),1)) + logname[6:]) 

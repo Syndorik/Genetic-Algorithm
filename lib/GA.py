@@ -23,13 +23,14 @@ except Exception as e:
 
 class GA:
     
-    def __init__(self,list_files,k_mut_prob = 0.4, k_crossover = 3, tournament_size=7, elitism =True):
+    def __init__(self,list_files,k_mut_prob = 0.4, k_crossover = 3, tournament_size=7, elitism =True, method = "swap"):
         self.k_mut_prob = k_mut_prob
         self.tournament_size = tournament_size
         self.elitism = elitism
         self.list_files = list_files
         self.k_crossover = k_crossover
         self.nodeNum = list_files[0][0][0]
+        self.method = method
     
     @staticmethod
     def swap(tree, mut_pos1, mut_pos2):
@@ -47,6 +48,24 @@ class GA:
         tmp_tree.prufer[mut_pos1] = hub2
 
         return tmp_tree
+    
+    @staticmethod
+    def swap_2opt(tree, mut_pos1, mut_pos2):
+        tmp_tree = copy.deepcopy(tree)
+        # if they're the same, skip to the chase
+        if mut_pos1 == mut_pos2:
+            return tmp_tree
+        
+        if(mut_pos1>mut_pos2):
+            tmp = mut_pos1
+            mut_pos1 = mut_pos2
+            mut_pos2 = tmp
+        
+        fp = [tree.prufer[l] for l in range(mut_pos1)]
+        lp = [tree.prufer[l] for l in range(mut_pos2+1, len(tree.prufer))]
+        middle = [tree.prufer[l] for l in range(mut_pos2,mut_pos1-1,-1)]
+        tree.prufer = fp+middle+lp
+        return tree
     
     def tournament_select(self, population):
         '''
@@ -190,7 +209,7 @@ class GA:
 
         return tmp_tree
 
-    def mutate_2opt(self,tree_mut):
+    def mutate_swap(self,tree_mut):
         '''
         Tree() --> Tree()
 
@@ -221,7 +240,7 @@ class GA:
         return tree
     
 
-    def mutate_2opt_nerfed(self,tree_mut):
+    def mutate_swap_nerfed(self,tree_mut):
         '''
         Tree() --> Tree()
 
@@ -235,12 +254,15 @@ class GA:
         # k_mut_prob %
         breakk = False
         lenn = len(tree.prufer)
-        list_indices = list(set(random.choices(list(range(lenn)), k = int(self.nodeNum/3))))
+        
         if random.random() < self.k_mut_prob:
+            list_indices = list(set(random.choices(list(range(lenn)), k = int(self.nodeNum/3))))
+            allposs = []
             for i in list_indices:
-                for j in range(lenn): # i is a, i + 1 is b, j is c, j+1 is d
+                for j in range(lenn):
                     tmp_tree = GA.swap(tree,i,j)
                     tmp_tree.calc_fit()
+                    allposs.append(tmp_tree)
                     if(tree.fitness > tmp_tree.fitness):
                         tree = tmp_tree
                         breakk = True
@@ -248,29 +270,92 @@ class GA:
                 if breakk:
                     breakk = False
                     break
+            if not breakk:
+                tree = sorted(allposs, key=lambda x: x.fitness, reverse=False)[0]
             tree.calc_fit()
         return tree
 
 
-    def fittest_2opt(self,tree_mut):
+    def fittest_swap(self,tree_mut):
         '''
         Tree() --> Tree()
 
         Swaps two random indexes in route_to_mut.route. Here it's more intelligent since the swap is effective only if the fitness function
         after swap is lower.
         This method allows us to have a good local search on solutions
+        This is Local Search at the end of each generation 
         Runs k_mut_prob*100 % of the time
         '''
         tree = copy.deepcopy(tree_mut)
-        # k_mut_prob %
+        tree.calc_fit()
+        lenn = len(tree.prufer)
+
+        def toparall(i,j):
+            tmp_tree = GA.swap(tree,i,j)
+            tmp_tree.calc_fit()
+            return tmp_tree
+        
         if random.random() < self.k_mut_prob:
-            for i in range(len(tree.prufer)):
-                for j in range(len(tree.prufer)): # i is a, i + 1 is b, j is c, j+1 is d
-                    tmp_tree = GA.swap(tree,i,j)
-                    if(tree.individualFitness() > tmp_tree.individualFitness()):
-                        tree = tmp_tree
+            for i in range(lenn):
+                possibilities = Parallel(n_jobs=-1)(delayed(toparall)(i,j) for j in range(lenn))
+                tmplist = sorted(possibilities, key=lambda x: x.fitness, reverse=False)
+                tree = tmplist[0]
+        return tree
+
+    def mutate_2opt(self, tree_mut):
+        '''
+        Tree() --> Tree()
+
+        Doing a 2opt swap. We're keeping the best swap among the possibles 2opt swap. The fitness can be lower than the original one
+        This method allows us to have a good local search on solutions
+        Runs k_mut_prob*100 % of the time
+        '''
+        tree = copy.deepcopy(tree_mut)
+        tree.calc_fit()
+        # k_mut_prob %
+
+        lenn = len(tree.prufer)
+        def parallel(i,j):
+            tmp_tree = GA.swap_2opt(tree,i,j)
+            tmp_tree.calc_fit()
+            return tmp_tree
+
+        if random.random() < self.k_mut_prob:
+            list_indices = list(set(random.choices(list(range(lenn)), k = int(self.nodeNum/4))))
+            allposs =[]
+
+            for i in list_indices:
+                possibilities = Parallel(n_jobs=-1)(delayed(parallel)(i,j) for j in range(lenn))
+                tmplist = sorted(possibilities, key=lambda x: x.fitness, reverse=False)
+                allposs.append(tmplist[0])
+            
+            tmplist = sorted(allposs, key=lambda x: x.fitness, reverse=False)
+            tree = tmplist[0]
             tree.calc_fit()
         return tree
+
+    def change_three_bests(self, population):
+        """
+        TreePop() --> TreePop()
+        Change the first three best trees (in term of fitness). We're testing every swap possible.
+        ### @TODO do it until there are 3 different trees
+        """
+        population.sort_treepop()
+
+        #for k in range(3):
+        #    population.tree_pop[k] = self.fittest_swap(population.tree_pop[k])
+        cpt = 0
+        k = 0
+        lenn = len(population.tree_pop)
+        done = []
+        while(cpt< 5 and k< lenn):
+            print(k)
+            population.tree_pop[k] = self.fittest_swap(population.tree_pop[k])
+            if(population.tree_pop[k] not in done):
+                cpt+=1
+                done.append(population.tree_pop[k])
+            k+=1
+        return population
 
     def evolve_population(self, init_pop):
         '''
@@ -296,6 +381,9 @@ class GA:
             tournament_parent1 = self.tournament_select(init_pop)[0]
             tournament_parent2 = self.tournament_select(init_pop)[0]
 
+            while(tournament_parent2 == tournament_parent1):
+                tournament_parent2 = self.tournament_select(init_pop)[0]
+
             # A child:
             tournament_child = self.crossover_kpoint(tournament_parent1, tournament_parent2)
 
@@ -305,9 +393,19 @@ class GA:
         # tre_ind in range(len(descendant_pop.tree_pop)):
         #    descendant_pop.tree_pop[tre_ind] = self.mutate_2opt_nerfed(descendant_pop.tree_pop[tre_ind])
 
-        tmp = Parallel(n_jobs=-1)(delayed(self.mutate_2opt_nerfed)(descendant_pop.tree_pop[tre_ind]) for tre_ind in range(len(descendant_pop.tree_pop)))
+        if(self.method == "swap"):
+            func = self.mutate_swap_nerfed
+        elif (self.method == "opt"):
+            func = self.mutate_2opt
+
+        tmp = Parallel(n_jobs=-1)(delayed(func)(descendant_pop.tree_pop[tre_ind]) for tre_ind in range(len(descendant_pop.tree_pop)))
         descendant_pop.tree_pop = tmp
+
         # Update the fittest Tree:
+        #descendant_pop.sort_treepop()
+        #descendant_pop.tree_pop[0] = self.fittest_2opt(descendant_pop.tree_pop[0])
+        
         descendant_pop.get_fittest()
+        
 
         return descendant_pop

@@ -39,3 +39,7 @@ class TreePop(object):
         sorted_list = sorted(self.tree_pop, key=lambda x: x.fitness, reverse=False)
         self.fittest = sorted_list[0]
         return self.fittest
+    
+    def sort_treepop(self):
+        sorted_list = sorted(self.tree_pop, key=lambda x: x.fitness, reverse=False)
+        self.tree_pop = sorted_list
