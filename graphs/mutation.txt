@@ -1,0 +1,59 @@
+Params : 3
+Fitness : 172827476.80
+#
+Params : 2
+Fitness : 175243376.60
+#
+Params : 4
+Fitness : 176574418.70
+#
+Params : 1
+Fitness : 178637242.60
+#
+Params : 0
+Fitness : 234769844.80
+#
+Params : 2
+Fitness : 179965300.00
+#
+Params : 4
+Fitness : 180005143.40
+#
+Params : 3
+Fitness : 170725395.80
+#
+Params : 4
+Fitness : 171247472.10
+#
+Params : 0
+Fitness : 172258770.40
+#
+Params : 0
+Fitness : 182959328.40
+#
+Params : 0
+Fitness : 183583120.30
+#
+Params : 1
+Fitness : 188085253.40
+#
+Params : 2
+Fitness : 187697922.90
+#
+Params : 2
+Fitness : 189058276.50
+#
+Params : 3
+Fitness : 191207300.00
+#
+Params : 1
+Fitness : 197148077.90
+#
+Params : 3
+Fitness : 197760307.40
+#
+Params : 4
+Fitness : 209549849.90
+#
+Params : 1
+Fitness : 204374142.60
