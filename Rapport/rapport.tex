@@ -224,7 +224,14 @@ Le but de ce test est de voir l'influence du nombre de "coupe" dans le crossover
 \begin{itemize}
 	\item Le nombre de "coupe" k : [1,2,3,4]
 \end{itemize}
-Pour chaque combinaisons possibles de paramètre l'algorithme a été lancé et les valeurs de fitness ont été enregistré ainsi que le code de Prüfer associé.
+Le temps d'exécution étant long, nous avons lancé les tests 4 fois pour chaque probabilité de mutation. Le graphique ci-dessous est basé sur la médiane des résultats obtenus. Deux autres graphiques sont disponibles en \textbf{Annexe : 5.1}. Le premier est le même graphique mais basé sur la moyenne, le second représente la répartition des différents tests.
+\begin{figure}[!h]
+	\centering
+	\includegraphics[keepaspectratio = true,scale=0.65]{kcross_median.png}
+	\caption{Médiane des probabilités de mutations}
+\end{figure}
+Que ce soit avec la médiane ou la moyenne, nous pouvons supposer que l'algorithme se comporte de manière optimale pour k =3, ce qui est le paramètre par défaut choisi.\\
+Il est à noter que pour confirmer cette hypothèse, nous devrions faire des tests pour des valeurs de k supérieurs à 4. Cependant par manque de temps, nous ne pouvons pas exécuter les tests.
 
 
 \subsubsection{Test sur la probabilité de mutation}
@@ -232,7 +239,7 @@ Le but de ce test est de voir l'influence de la probabilité de mutation sur la 
 \begin{itemize}
 	\item Probabilité de mutation m : [0.1,0.3,0.4,0.6,0.8]
 \end{itemize}
-Le temps d'exécution étant long, nous avons lancé les tests 4 fois pour chaque probabilité de mutation. Le graphique ci-dessous est basé sur la médiane des résultats obtenus. Deux autres graphiques sont disponibles en \textbf{Annexe : 4.1}. Le premier est le même graphique mais basé sur la moyenne, le second représente la répartition des différents tests.
+De même que pour le k-point crossover, le graphique ci-dessous est basé sur la médiane des 4 essaies, d'autres graphiques sont disponnibe en \textbf{Annexe : 5.2}
 \begin{figure}[!h]
 	\centering
 	\includegraphics[keepaspectratio = true,scale=0.65]{mutationProb.png}
@@ -240,15 +247,33 @@ Le temps d'exécution étant long, nous avons lancé les tests 4 fois pour chaqu
 \end{figure}
 Selon le graphique, plus la probabilité de mutation est grande, meilleur sont les résultats (que ce soit en médiane ou en moyenne). Cela paraît assez logique, car une grande partie de notre local search est effectué dans la fonction de mutation. Ainsi, lorsqu'il y a peu de mutation, il y a peu de local search, donc des solutions moins optimisés.\\
 Il est cependant étonnant de voir qu'une forte probabilité de mutation entraîne de meilleurs performances qu'une probabilité moyenne car l'exploitation est privilégié à l'exploration. Donc le risque d'être dans un minimum local est plus grand.\\
-
+\newpage
 \subsubsection{Test sur la méthode}
 Le but de ce test est de voir quelle méthode de permutation est la meilleure pour notre problème. Les tests ont été effectué avec les paramètres par défaut excepté pour lz paramètre suivant :
 \begin{itemize}
 	\item méthode : ["swap","2opt"]
 \end{itemize}
 Pour chaque combinaisons possibles de paramètre l'algorithme a été lancé et les valeurs de fitness ont été enregistré ainsi que le code de Prüfer associé.
+
+\section{Conclusion}
+En conclusion, l'algorithme développé a donné avec l'ensemble des tests une fitness de $1.579x10^8$. En moyenne il retourne une fitness de $1.7x10^8$. Le temps d'exécution dépend beaucoup des paramètres comme discuté dans ce rapport. En moyenne il prend environ 10 minutes à s'exécuter, cela peut aller jusqu'à 30 minutes dans le pire des cas.
+
 \newpage
 \section{Annexe}
+\subsection{Graphique sur les k point crossover}
+\subsubsection{Répartitions selon les tests}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[keepaspectratio = true,scale=0.65]{kcross.png}
+\end{figure}
+\subsubsection{Moyenne de la fitness en fonction de k}
+\begin{figure}[!h]
+	\centering
+	\includegraphics[keepaspectratio = true,scale=0.65]{kcross_mean.png}
+\end{figure}
+
+
+\newpage
 \subsection{Graphique sur les mutations}
 \subsubsection{Répartitions selon les tests}
 \begin{figure}[!h]

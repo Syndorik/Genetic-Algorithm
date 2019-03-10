@@ -20,7 +20,11 @@
 \BOOKMARK [3][-]{subsubsection.3.2.2}{Test sur le k point crossover}{subsection.3.2}% 20
 \BOOKMARK [3][-]{subsubsection.3.2.3}{Test sur la probabilit\351 de mutation}{subsection.3.2}% 21
 \BOOKMARK [3][-]{subsubsection.3.2.4}{Test sur la m\351thode}{subsection.3.2}% 22
-\BOOKMARK [1][-]{section.4}{Annexe}{}% 23
-\BOOKMARK [2][-]{subsection.4.1}{Graphique sur les mutations}{section.4}% 24
-\BOOKMARK [3][-]{subsubsection.4.1.1}{R\351partitions selon les tests}{subsection.4.1}% 25
-\BOOKMARK [3][-]{subsubsection.4.1.2}{Moyenne de la fitness en fonction de la probabilit\351 de mutation}{subsection.4.1}% 26
+\BOOKMARK [1][-]{section.4}{Conclusion}{}% 23
+\BOOKMARK [1][-]{section.5}{Annexe}{}% 24
+\BOOKMARK [2][-]{subsection.5.1}{Graphique sur les k point crossover}{section.5}% 25
+\BOOKMARK [3][-]{subsubsection.5.1.1}{R\351partitions selon les tests}{subsection.5.1}% 26
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Moyenne de la fitness en fonction de k}{subsection.5.1}% 27
+\BOOKMARK [2][-]{subsection.5.2}{Graphique sur les mutations}{section.5}% 28
+\BOOKMARK [3][-]{subsubsection.5.2.1}{R\351partitions selon les tests}{subsection.5.2}% 29
+\BOOKMARK [3][-]{subsubsection.5.2.2}{Moyenne de la fitness en fonction de la probabilit\351 de mutation}{subsection.5.2}% 30
