@@ -1,0 +1,28 @@
+\babel@toc {english}{}
+\babel@toc {english}{}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {section}{\numberline {2}Design de l'algorithme g\IeC {\'e}n\IeC {\'e}tique}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}Repr\IeC {\'e}sentation des solutions}{4}{subsection.2.1}
+\contentsline {subparagraph}{Fitness function\\}{4}{section*.2}
+\contentsline {subsection}{\numberline {2.2}Op\IeC {\'e}rateur de Crossover}{4}{subsection.2.2}
+\contentsline {subsection}{\numberline {2.3}Op\IeC {\'e}rateur de S\IeC {\'e}lection}{5}{subsection.2.3}
+\contentsline {subsection}{\numberline {2.4}Op\IeC {\'e}rateur de mutation}{5}{subsection.2.4}
+\contentsline {subparagraph}{Op\IeC {\'e}rateur swap\\}{5}{section*.3}
+\contentsline {subparagraph}{Op\IeC {\'e}rateur swap\_2opt\\}{5}{section*.4}
+\contentsline {subsubsection}{\numberline {2.4.1}Fonction : mutate}{6}{subsubsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.2}Fonction : mutate\_swap}{6}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.3}Fonction : mutate\_swap\_nerfed \\}{6}{subsubsection.2.4.3}
+\contentsline {subsubsection}{\numberline {2.4.4}Fonction : mutate\_2opt\\}{6}{subsubsection.2.4.4}
+\contentsline {subsection}{\numberline {2.5}Crit\IeC {\`e}res d'arr\IeC {\^e}ts}{6}{subsection.2.5}
+\contentsline {subsection}{\numberline {2.6}D\IeC {\'e}roulement de l'algorithme g\IeC {\'e}n\IeC {\'e}tique}{7}{subsection.2.6}
+\contentsline {section}{\numberline {3}R\IeC {\'e}sultats et tests}{8}{section.3}
+\contentsline {subsection}{\numberline {3.1}Meilleur R\IeC {\'e}sultat}{8}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Tests}{9}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}Test sur la taille de la population et le nombre d'individus dans un tournois }{9}{subsubsection.3.2.1}
+\contentsline {subsubsection}{\numberline {3.2.2}Test sur le k point crossover}{9}{subsubsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.3}Test sur la probabilit\IeC {\'e} de mutation}{10}{subsubsection.3.2.3}
+\contentsline {subsubsection}{\numberline {3.2.4}Test sur la m\IeC {\'e}thode}{10}{subsubsection.3.2.4}
+\contentsline {section}{\numberline {4}Annexe}{11}{section.4}
+\contentsline {subsection}{\numberline {4.1}Graphique sur les mutations}{11}{subsection.4.1}
+\contentsline {subsubsection}{\numberline {4.1.1}R\IeC {\'e}partitions selon les tests}{11}{subsubsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.2}Moyenne de la fitness en fonction de la probabilit\IeC {\'e} de mutation}{11}{subsubsection.4.1.2}
