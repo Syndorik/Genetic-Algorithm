@@ -59,8 +59,15 @@ params_c = []
 for j in params["c"]:
 	params_c.append({"np": 200, "t" : 8 , "c" : j})
 
+
+params_me = []
+for j in params["me"]:
+	params_me.append({"np": 200, "t" : 8 , "me" : j})
+
+
 for kk in range(len(params_np_t)):
-	lg = "tournAndpop_" + str(kk)
+	print(kk)
+	lg = "tournAndpop_" + str(kk+17)
 	exec(params_np_t[kk], lg)
 	
 for jj in range(len(params_m)):
@@ -73,6 +80,11 @@ for jj in range(len(params_c)):
 	for l in range(4):
 		lg = "cross_"+str(jj)+"-"+str(l)
 		lgn = exec(params_c[jj], lg)
+
+for jj in range(len(params_me)):
+	for l in range(4):
+		lg = "method_"+str(jj)+"-"+str(l)
+		lgn = exec(params_me[jj], lg)
 
 
 

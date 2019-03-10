@@ -10,6 +10,7 @@ from TreePop import TreePop
 import copy
 
 from joblib import Parallel, delayed
+import joblib
 """
 try:
     from tkinter import *
@@ -297,7 +298,7 @@ class GA:
         
         if random.random() < self.k_mut_prob:
             for i in range(lenn):
-                possibilities = Parallel(n_jobs=-1)(delayed(toparall)(i,j) for j in range(lenn))
+                possibilities = joblib.Parallel(n_jobs=-1)(delayed(toparall)(i,j) for j in range(lenn))
                 tmplist = sorted(possibilities, key=lambda x: x.fitness, reverse=False)
                 tree = tmplist[0]
         return tree
@@ -325,7 +326,7 @@ class GA:
             allposs =[]
 
             for i in list_indices:
-                possibilities = Parallel(n_jobs=-1)(delayed(parallel)(i,j) for j in range(lenn))
+                possibilities = joblib.Parallel(n_jobs=-1)(delayed(parallel)(i,j) for j in range(lenn))
                 tmplist = sorted(possibilities, key=lambda x: x.fitness, reverse=False)
                 allposs.append(tmplist[0])
             
@@ -338,7 +339,7 @@ class GA:
         """
         TreePop() --> TreePop()
         Change the first three best trees (in term of fitness). We're testing every swap possible.
-        ### @TODO do it until there are 5 different trees
+        ### @TODO do it until there are 3 different trees
         """
         population.sort_treepop()
 

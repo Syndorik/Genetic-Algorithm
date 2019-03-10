@@ -284,6 +284,7 @@ if __name__ == '__main__':
     print("The elitism : {}".format(elitism))
     print("The mutation method chosen {}".format(method))
     print("##################")
+    
 
 
     
@@ -294,6 +295,16 @@ if __name__ == '__main__':
         return values
     logging.basicConfig(level=logging.DEBUG, filename=logname, filemode="a+",
                         format="%(asctime)-15s %(levelname)-8s %(message)s")
+    
+    logging.info("Number of generation : {}".format(n_generations))
+    logging.info("Size of the population :  {}".format(n_population))
+    logging.info("Log file will be located at : {}".format(logname))
+    logging.info("The input data taken is : {}".format(mysheet))
+    logging.info("The mutation probability : {}".format(k_mut_prob))
+    logging.info("The number of point for crossover : {}".format(k_crossover))
+    logging.info("The size for tournament : {}".format(tournament_size))
+    logging.info("The elitism : {}".format(elitism))
+    logging.info("The mutation method chosen {}".format(method))
     
     
     list_files = [read_excel_data(mysheet, "NodeNum"), read_excel_data(mysheet, "flow"), read_excel_data(mysheet, "varCost"),
